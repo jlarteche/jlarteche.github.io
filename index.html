@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Inversión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="number"],
+        input[type="date"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <form id="investmentForm">
+        <label for="investmentAmount">Cantidad a invertir:</label>
+        <input type="number" id="investmentAmount" required><br><br>
+        <label for="expiryDate">Fecha de vencimiento:</label>
+        <input type="date" id="expiryDate" required><br><br>
+        <label for="tir">TIR (interés anual en tanto por ciento):</label>
+        <input type="number" id="tir" required><br><br>
+        <label for="commission">Comisión en tanto por ciento:</label>
+        <input type="number" id="commission" required><br><br>
+        <button type="button" onclick="calculateInvestment()">Calcular</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        function calculateInvestment() {
+            // Obtener los valores de los campos de entrada
+            var investmentAmount = parseFloat(document.getElementById('investmentAmount').value);
+            var expiryDate = new Date(document.getElementById('expiryDate').value);
+            var tir = parseFloat(document.getElementById('tir').value) / 100;
+            var commission = parseFloat(document.getElementById('commission').value) / 100;
+
+            // Calcular la diferencia en días entre la fecha de vencimiento y la fecha actual
+            var currentDate = new Date();
+            var timeDiff = Math.abs(expiryDate.getTime() - currentDate.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            // Calcular la proporción del tiempo en relación con un año
+            var timeRatio = diffDays / 365;
+
+            // Calcular la comisión con un límite máximo de 200
+            var calculatedCommission = investmentAmount * commission;
+            var finalCommission = calculatedCommission > 200 ? 200 : calculatedCommission;
+
+            // Calcular el interés de la inversión
+            var investmentInterest = investmentAmount * tir * timeRatio;
+
+            // Calcular el resultado final de la inversión
+            var finalAmount = investmentAmount + investmentInterest - finalCommission;
+
+            // Crear el mensaje final que incluye los detalles de la inversión
+            var resultMessage = "Resultado de la inversión: " + finalAmount.toFixed(2) +
+                "<br><br>Detalles de cálculo:" +
+                "<br>Comisión total (calculada como " + investmentAmount.toFixed(2) + " * " + (commission * 100) + " por ciento): " + finalCommission.toFixed(2) +
+                "<br>Interés de la inversión (calculado como " + investmentAmount.toFixed(2) + " * " + (tir * 100).toFixed(3) + " * " + timeRatio.toFixed(2) + " años): " + investmentInterest.toFixed(2) +
+                "<br>Días de diferencia (calculado como diferencia entre las fechas de vencimiento y actual): " + diffDays + ", de ahí lo de " + timeRatio.toFixed(2) + " años";
+
+            document.getElementById('result').innerHTML = resultMessage;
+        }
+    </script>
+</body>
+</html>

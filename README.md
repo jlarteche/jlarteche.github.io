@@ -1,2 +1,0 @@
-# jlarteche.github.io
-web
